@@ -2,6 +2,7 @@
 package main
 
 import (
+	"github.com/bit101/bitlib/geom"
 	"github.com/bit101/bitlib/random"
 	"github.com/bit101/blgg"
 	"github.com/bit101/blgg/render"
@@ -11,7 +12,7 @@ import (
 )
 
 func main() {
-	target := render.ImageTarget
+	target := render.GifTarget
 
 	switch target {
 	case render.ImageTarget:
@@ -20,8 +21,8 @@ func main() {
 		break
 
 	case render.GifTarget:
-		render.Frames(400, 400, 60, "frames", renderFrame)
-		render.MakeGIF("ffmpeg", "frames", "out.gif", 30)
+		render.Frames(800, 800, 10, "frames", renderFrame)
+		render.MakeGIF("ffmpeg", "frames", "out.gif", 15)
 		render.ViewImage("out.gif")
 		break
 
@@ -54,27 +55,52 @@ func renderFrame(context *blgg.Context, width, height, percent float64) {
 	context.SetFontFace(face)
 	s.DrawString("Hello world", 280, 640)
 
-	r := 10.0
-	s.SegmentSize = 40
+	r := 5.0
+	s.SegmentSize = 30
+	num := 5
 
-	s.StrokeMultiRect(250, 350, 200, 200, r, 3)
-	s.StrokeMultiRect(350, 250, 200, 200, r, 3)
+	s.StrokeMultiRect(250, 350, 200, 200, r, num)
+	s.StrokeMultiRect(350, 250, 200, 200, r, num)
 
-	s.StrokeMultiLine(250, 350, 350, 250, r, 3)
-	s.StrokeMultiLine(450, 350, 550, 250, r, 3)
-	s.StrokeMultiLine(450, 550, 550, 450, r, 3)
-	s.StrokeMultiLine(250, 550, 350, 450, r, 3)
+	s.StrokeMultiLine(250, 350, 350, 250, r, num)
+	s.StrokeMultiLine(450, 350, 550, 250, r, num)
+	s.StrokeMultiLine(450, 550, 550, 450, r, num)
+	s.StrokeMultiLine(250, 550, 350, 450, r, num)
 
-	s.SegmentSize = 10
-	s.SetRGB(0.5, 0, 0)
+	num = 3
+	s.SetHSV(0, 0.25, 1)
 	s.FillRectangle(10, 10, 100, 100)
+	s.SetBlack()
+	s.StrokeMultiRect(10, 10, 100, 100, r, num)
 
-	s.SetRGB(0, 0, 0.5)
+	s.SetHSV(70, 0.25, 1)
 	s.FillRectangle(690, 10, 100, 100)
+	s.SetBlack()
+	s.StrokeMultiRect(690, 10, 100, 100, r, num)
 
-	s.SetRGB(0, 0.5, 0)
+	s.SetHSV(140, 0.25, 1)
 	s.FillRectangle(690, 690, 100, 100)
+	s.SetBlack()
+	s.StrokeMultiRect(690, 690, 100, 100, r, num)
 
-	s.SetRGB(0.5, 0, 0.5)
+	s.SetHSV(210, 0.25, 1)
 	s.FillRectangle(10, 690, 100, 100)
+	s.SetBlack()
+	s.StrokeMultiRect(10, 690, 100, 100, r, num)
+
+	s.SetRGB(1, 0.5, 0)
+	s.SegmentSize = 20
+	points := []*geom.Point{
+		geom.NewPoint(200, 20),
+		geom.NewPoint(600, 20),
+		geom.NewPoint(650, 100),
+		geom.NewPoint(600, 50),
+		geom.NewPoint(200, 50),
+		geom.NewPoint(150, 100),
+		geom.NewPoint(200, 20),
+	}
+	s.FillPath(points, true)
+
+	s.SetBlack()
+	s.StrokeMultiPath(points, true, 3, 3)
 }

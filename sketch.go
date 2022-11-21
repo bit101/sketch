@@ -4,6 +4,7 @@ package sketch
 import (
 	"math"
 
+	"github.com/bit101/bitlib/geom"
 	"github.com/bit101/bitlib/random"
 	"github.com/bit101/blgg"
 )
@@ -129,6 +130,46 @@ func (s *Sketch) DrawString(str string, x, y float64) {
 		s.Context.DrawString(string(c), random.FloatRange(-d, d), random.FloatRange(-d, d))
 		w, _ := s.MeasureString(string(c))
 		x += w
+		s.Pop()
+	}
+}
+
+// Path draws a sketchy path through a set of points.
+func (s *Sketch) Path(points []*geom.Point, closed bool) {
+	s.MoveTo(points[0].X, points[0].Y)
+	for i := 1; i < len(points); i++ {
+		s.LineTo(points[i].X, points[i].Y)
+	}
+	if closed {
+		s.LineTo(points[0].X, points[0].Y)
+	}
+}
+
+// StrokePath strokes a sketchy path through a set of points.
+func (s *Sketch) StrokePath(points []*geom.Point, closed bool) {
+	s.Path(points, closed)
+	s.Stroke()
+}
+
+// FillPath fills a sketchy path through a set of points.
+func (s *Sketch) FillPath(points []*geom.Point, closed bool) {
+	s.Path(points, closed)
+	s.Fill()
+}
+
+// StrokeMultiPath strokes a sketchy path through a set of points.
+func (s *Sketch) StrokeMultiPath(points []*geom.Point, closed bool, separation float64, iter int) {
+	for i := 0; i < iter; i++ {
+		dx := random.FloatRange(-separation, separation)
+		dy := random.FloatRange(-separation, separation)
+
+		p2 := make([]*geom.Point, len(points))
+		for i, p := range points {
+			p2[i] = geom.NewPoint(p.X+dx, p.Y+dy)
+		}
+
+		s.Push()
+		s.StrokePath(p2, closed)
 		s.Pop()
 	}
 }
